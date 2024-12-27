@@ -8,15 +8,15 @@ export default function Header() {
   const path = useLocation().pathname;
   console.log(path);
   return (
-    <Navbar className="border-b-2">
+    <Navbar className="border-b-2  border-purple-500">
       <Link
         to="/"
-        className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white"
+        className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white  border-purple-500 gap-2"
       >
-        <span className="px-2 py-1 bg-black text-purple-500 rounded-md">
+        <span className="px-2 py-1 border-2 text-black  border-purple-500 rounded-md">
           5181
         </span>
-        blog
+        <span className="text-purple-500"> blog</span>
       </Link>
       <form>
         <TextInput
@@ -31,17 +31,19 @@ export default function Header() {
       <div className="flex gap-2 md:order-2">
         <Button
           color="white"
-          className="w-12 h-10 hidden sm:inline text-purple-500 "
+          className="w-12 h-10 hidden sm:inline text-purple-500  border-purple-500 border-2"
           pill
         >
           <BsFillMoonStarsFill />
         </Button>
         <Link to="/signin">
-          <Button>Sign-In</Button>
+          <Button className="text-purple-500 bg-white border border-purple-500">
+            Sign-In
+          </Button>
         </Link>
         <Navbar.Toggle />
       </div>
-      <Navbar.Collapse>
+      <Navbar.Collapse className="text-purple-500">
         <Navbar.Link active={path === "/"} as={"div"}>
           <Link to="/">Home</Link>
         </Navbar.Link>
