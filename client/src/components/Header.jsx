@@ -37,7 +37,7 @@ export default function Header() {
           <BsFillMoonStarsFill />
         </Button>
         <Link to="/signin">
-          <Button className="text-purple-500 bg-white border border-purple-500">
+          <Button color="purple" className="text-white border-purple-500">
             Sign-In
           </Button>
         </Link>
