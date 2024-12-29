@@ -6,11 +6,15 @@ import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 function App() {
   return (
     <BrowserRouter>
-      <Header />
+      <div className="sticky top-0 z-10 bg-white shadow-md">
+        <Header />
+      </div>
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -19,6 +23,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/projects" element={<Projects />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 }

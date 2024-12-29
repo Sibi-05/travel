@@ -8,7 +8,7 @@ export default function Header() {
   const path = useLocation().pathname;
   console.log(path);
   return (
-    <Navbar className="border-b-2  border-purple-500">
+    <Navbar className=" border-b-2  border-purple-500">
       <Link
         to="/"
         className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white  border-purple-500 gap-2"
