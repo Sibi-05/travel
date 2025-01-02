@@ -1,14 +1,21 @@
 import { Alert, Button, Label, TextInput } from "flowbite-react";
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { data, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { HiInformationCircle } from "react-icons/hi";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInStart,
+  signInSuccess,
+  SignInFailure,
+} from "../toolkit/user/userSlice";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
+
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -17,39 +24,29 @@ export default function SignIn() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage(null); // Clear any previous error messages
+    dispatch(SignInFailure(null));
 
-    // Check for empty fields
     if (!formData.email || !formData.password) {
-      return setErrorMessage("Please fill out all fields!");
+      return dispatch(SignInFailure("Please fill out all fields!"));
     }
-
     try {
-      setLoading(true); // Set loading state
+      dispatch(signInStart());
       const res = await axios.post("/api/auth/signin", formData);
+      const data = await res.data;
 
-      if (res.data.success === false) {
-        return setErrorMessage(res.data.message || "Sign-In Failed!");
+      if (data.success === false) {
+        dispatch(SignInFailure(data.message));
+        console.log(data.message);
       }
 
-      // Success - Perform redirect or display success message
-      console.log("Sign-In successful:", res.data);
-
-      setLoading(false);
-      setFormData({});
-      setErrorMessage(null);
+      console.log("Sign-In successful:", data);
 
       if (res.status == 200) {
+        dispatch(signInSuccess(data));
         navigate("/");
       }
     } catch (error) {
-      console.error(error);
-      setLoading(false);
-      setErrorMessage(
-        error.response?.data?.message || "An error occurred. Please try again."
-      );
-    } finally {
-      setLoading(false); // Reset loading state
+      dispatch(SignInFailure(error.message));
     }
   };
 
@@ -93,11 +90,7 @@ export default function SignIn() {
                 onChange={handleChange}
               />
             </div>
-            <Button
-              color="purple"
-              type="submit"
-              disabled={loading} // Disable button while loading
-            >
+            <Button color="purple" type="submit" disabled={loading}>
               {loading ? "Signing In..." : "Sign In"}
             </Button>
           </form>
