@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { HiInformationCircle } from "react-icons/hi";
+import OAuth from "../components/OAuth";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
@@ -108,6 +109,7 @@ export default function SignUp() {
             >
               {loading ? "Signing Up..." : "Sign Up"}
             </Button>
+            <OAuth />
           </form>
           {errorMessage && (
             <Alert className="mt-5" color="failure" icon={HiInformationCircle}>

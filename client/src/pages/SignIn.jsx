@@ -9,16 +9,16 @@ import {
   signInSuccess,
   SignInFailure,
 } from "../toolkit/user/userSlice";
+import OAuth from "../components/OAuth";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
-
   const { loading, error: errorMessage } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+    setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
     // updatedFormData is { name: "John", age: 25 , email: "john@example.com" }
   };
 
@@ -93,6 +93,7 @@ export default function SignIn() {
             <Button color="purple" type="submit" disabled={loading}>
               {loading ? "Signing In..." : "Sign In"}
             </Button>
+            <OAuth />
           </form>
           {errorMessage && (
             <Alert className="mt-5" color="failure" icon={HiInformationCircle}>
