@@ -17,7 +17,7 @@ export default function FooterCom() {
                 to="/"
                 className="self-center text-lg whitespace-nowrap  sm:text-xl font-semibold dark:text-white  border-purple-500 gap-2"
               >
-                <span className="px-2 py-1 border-2 text-black  border-purple-500 rounded-md">
+                <span className="px-2 py-1 border-2 text-black  border-purple-500 rounded-md dark:text-white">
                   5181
                 </span>
                 <span className="text-purple-500"> blog</span>

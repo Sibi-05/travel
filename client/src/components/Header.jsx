@@ -10,19 +10,21 @@ import { Link, useLocation } from "react-router-dom";
 import { BiSearchAlt } from "react-icons/bi";
 import { BsFillMoonStarsFill } from "react-icons/bs";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { toogleTheme } from "../toolkit/theme/themeSlice.js";
 
 export default function Header() {
+  const dispatch = useDispatch();
   const path = useLocation().pathname;
   const { currentUser } = useSelector((state) => state.user);
 
-  const handleSignOut = () => {};
   return (
     <Navbar className=" border-b-2  border-purple-500">
       <Link
         to="/"
         className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white  border-purple-500 gap-2"
       >
-        <span className="px-2 py-1 border-2 text-black  border-purple-500 rounded-md">
+        <span className="px-2 py-1 border-2 text-black  border-purple-500 rounded-md dark:text-white">
           5181
         </span>
         <span className="text-purple-500"> blog</span>
@@ -42,6 +44,7 @@ export default function Header() {
           color="white"
           className="w-12 h-10 hidden sm:inline text-purple-500  border-purple-500 border-2"
           pill
+          onClick={() => dispatch(toogleTheme())}
         >
           <BsFillMoonStarsFill />
         </Button>

@@ -5,11 +5,14 @@ import { store } from "./toolkit/store.js";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor } from "./toolkit/store.js";
+import ThemeProvider from "./components/ThemeProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
   <PersistGate persistor={persistor}>
     <Provider store={store}>
-      <App />
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
     </Provider>
   </PersistGate>
 );
