@@ -1,12 +1,21 @@
-import React from "react";
-import { Navbar, TextInput, Button } from "flowbite-react";
+import {
+  Navbar,
+  TextInput,
+  Button,
+  Dropdown,
+  Avatar,
+  DropdownHeader,
+} from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
 import { BiSearchAlt } from "react-icons/bi";
 import { BsFillMoonStarsFill } from "react-icons/bs";
+import { useSelector } from "react-redux";
 
 export default function Header() {
   const path = useLocation().pathname;
-  console.log(path);
+  const { currentUser } = useSelector((state) => state.user);
+
+  const handleSignOut = () => {};
   return (
     <Navbar className=" border-b-2  border-purple-500">
       <Link
@@ -36,11 +45,31 @@ export default function Header() {
         >
           <BsFillMoonStarsFill />
         </Button>
-        <Link to="/signin">
-          <Button color="purple" className="text-white border-purple-500">
-            Sign-In
-          </Button>
-        </Link>
+        {currentUser ? (
+          <Dropdown
+            arrowIcon={false}
+            inline
+            label={<Avatar alt="" img={currentUser.profilePicture} rounded />}
+          >
+            <DropdownHeader>
+              <span className="block text-sm">@{currentUser.username}</span>
+              <span className="block text-sm font-medium truncate">
+                {currentUser.email}
+              </span>
+            </DropdownHeader>
+            <Link to={"/dashboard?tab=profile"}>
+              <Dropdown.Item>Profile</Dropdown.Item>
+            </Link>
+            <Dropdown.Divider />
+            <Dropdown.Item className="font-bold">Sign Out</Dropdown.Item>
+          </Dropdown>
+        ) : (
+          <Link to="/signin">
+            <Button color="purple" className="text-white border-purple-500">
+              Sign-In
+            </Button>
+          </Link>
+        )}
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse className="text-purple-500">
