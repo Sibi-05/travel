@@ -95,7 +95,12 @@ export default function SignIn() {
             </Button>
             <OAuth />
           </form>
-          {errorMessage && (
+          {/* {errorMessage && (
+            <Alert className="mt-5" color="failure" icon={HiInformationCircle}>
+              {errorMessage}
+            </Alert>
+          )} */}
+          {errorMessage && typeof errorMessage === "string" && (
             <Alert className="mt-5" color="failure" icon={HiInformationCircle}>
               {errorMessage}
             </Alert>
