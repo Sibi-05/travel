@@ -7,11 +7,6 @@ import cookieParser from "cookie-parser";
 
 dotenv.config();
 
-const app = express();
-
-app.use(express.json());
-app.use(cookieParser());
-
 mongoose
   .connect(process.env.MONGO_DB)
   .then(() => {
@@ -20,6 +15,12 @@ mongoose
   .catch((error) => {
     console.log(error);
   });
+
+const app = express();
+
+app.use(express.json());
+app.use(cookieParser());
+
 app.listen(process.env.PORT, () => {
   console.log("Server is running on the port 3000!");
 });

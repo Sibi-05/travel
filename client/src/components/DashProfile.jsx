@@ -1,19 +1,31 @@
 import { Alert, TextInput } from "flowbite-react";
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "flowbite-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import {
+  updateStart,
+  updateSuccess,
+  updateFailure,
+} from "../toolkit/user/userSlice";
 
 export default function DashProfile() {
+  const dispatch = useDispatch();
+  const filePickerRef = useRef();
+
   const { currentUser } = useSelector((state) => state.user);
   const [imageFile, setImageFile] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
+  const [formData, setFormData] = useState({});
   const [imageFileUploadingProgress, setImageFileUploadingProgress] =
     useState(null);
+  const [imageFileUploading, setImageFileUploading] = useState(false);
+  const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
-  const filePickerRef = useRef();
+  const [updateUserError, setUpdateUserError] = useState(null);
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
 
@@ -57,16 +69,16 @@ export default function DashProfile() {
   const uploadImage = async () => {
     if (!imageFile) return;
     setImageFileUploadError(null);
-    const formData = new FormData();
-    formData.append("file", imageFile); // Add the file to formData
-    formData.append("upload_preset", "images"); // Replace with your Cloudinary upload preset
-    formData.append("cloud_name", "dde983ikx"); // Replace with your Cloudinary cloud name
+    const Data = new FormData();
+    Data.append("file", imageFile); // Add the file to formData
+    Data.append("upload_preset", "images"); // Replace with your Cloudinary upload preset
+    Data.append("cloud_name", "dde983ikx"); // Replace with your Cloudinary cloud name
 
     try {
       // Send request to Cloudinary API
       const res = await axios.post(
         `https://api.cloudinary.com/v1_1/dde983ikx/image/upload`,
-        formData,
+        Data,
         {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -78,19 +90,63 @@ export default function DashProfile() {
           },
         }
       );
-
-      const { secure_url } = res.data; // Cloudinary response contains the secure_url
-      setImageUrl(secure_url); // Set the Cloudinary URL
+      const { secure_url } = res.data;
+      setImageFile(null);
+      setImageFileUploadingProgress(null);
+      setImageUrl(null);
+      setFormData({ ...formData, profilePicture: secure_url });
     } catch (error) {
       console.error("Error uploading to Cloudinary:", error);
       setImageFileUploadError(error);
     }
   };
-  console.log(imageFile, imageUrl);
+  // console.log(imageFile, imageUrl);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setUpdateUserError(null);
+    setUpdateUserSuccess(null);
+    if (Object.keys(formData).length === 0) {
+      setUpdateUserError("No changes made");
+      return;
+    }
+    if (imageFileUploading) {
+      setUpdateUserError("Please wait for image to upload");
+      return;
+    }
+
+    try {
+      dispatch(updateStart());
+      console.log(currentUser);
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      console.log("D", data);
+      if (!res.ok) {
+        dispatch(updateFailure(data.message));
+        setUpdateUserError(data.message);
+      } else {
+        dispatch(updateSuccess(data));
+        setUpdateUserSuccess("User's profile updated successfully");
+      }
+    } catch (error) {
+      dispatch(updateFailure(error.message));
+      setUpdateUserError(error.message);
+    }
+  };
+
+  console.log(formData);
   return (
     <div className="max-w-lg max-auto p-3 w-full">
       <h1 className="my-7 text-center font-semibold text-3xl">Profile</h1>
-      <form className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <input
           type="file"
           accept="image/*"
@@ -141,20 +197,37 @@ export default function DashProfile() {
           id="username"
           placeholder="username"
           defaultValue={currentUser.username}
+          onChange={handleChange}
         />
         <TextInput
           type="email"
           id="email"
           placeholder="abc123@gmail.com"
           defaultValue={currentUser.email}
+          onChange={handleChange}
         />
-        <TextInput type="password" id="password" placeholder="*********" />
+        <TextInput
+          type="password"
+          id="password"
+          placeholder="*********"
+          onChange={handleChange}
+        />
         <Button type="submit">Update</Button>
       </form>
       <div className="text-red-500 flex justify-between">
         <span className="cursor-pointer">Delete Account</span>
         <span className="cursor-pointer">Sign Out</span>
       </div>
+      {updateUserSuccess && (
+        <Alert color="success" className="mt-5">
+          {updateUserSuccess}
+        </Alert>
+      )}
+      {updateUserError && (
+        <Alert color="success" className="mt-5">
+          {updateUserError}
+        </Alert>
+      )}
     </div>
   );
 }

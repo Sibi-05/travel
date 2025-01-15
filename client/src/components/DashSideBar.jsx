@@ -19,8 +19,6 @@ export default function DashSideBar() {
     if (tabFromUrl) {
       setTab(tabFromUrl);
     }
-    console.log(tab);
-    console.log(tab === "profile");
   }, [loaction.search]);
 
   return (

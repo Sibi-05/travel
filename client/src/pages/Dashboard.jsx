@@ -14,8 +14,6 @@ export default function Dashboard() {
     if (tabFromUrl) {
       setTab(tabFromUrl);
     }
-    console.log(tab);
-    console.log(tab === "profile");
   }, [loaction.search]);
 
   return (
