@@ -1,5 +1,6 @@
 import { errorHandler } from "../utils/error.js";
 import bcryptjs from "bcryptjs";
+import axios from "axios";
 import User from "../models/user.models.js";
 
 export const test = (req, res) => {
@@ -54,5 +55,17 @@ export const updateUser = async (req, res, next) => {
     res.status(200).json(rest);
   } catch (error) {
     next(error);
+  }
+};
+
+export const deleteUser = async (req, res, next) => {
+  if (req.user.id !== req.params.userId) {
+    return next(errorHandler(403, "you are not allowed!"));
+  }
+  try {
+    await User.findByIdAndDelete(req.params.userId);
+    res.status(200).json("User Id deleted Successfully!");
+  } catch (err) {
+    next(err);
   }
 };
