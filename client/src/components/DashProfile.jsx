@@ -13,6 +13,7 @@ import {
   deleteUserStart,
   deleteUserSuccess,
   deleteUserFailure,
+  signInSuccess,
 } from "../toolkit/user/userSlice";
 
 export default function DashProfile() {
@@ -104,7 +105,7 @@ export default function DashProfile() {
       setImageFileUploadError(error);
     }
   };
-  // console.log(imageFile, imageUrl);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
@@ -161,6 +162,21 @@ export default function DashProfile() {
       }
     } catch (error) {
       dispatch(deleteUserFailure(error.message));
+    }
+  };
+
+  const handleSignout = async () => {
+    try {
+      const res = await axios.post("api/user/signout");
+      console.log(res);
+      const data = res.data;
+      if (res.status !== 200) {
+        console.log(data.message);
+      } else {
+        dispatch(signInSuccess());
+      }
+    } catch (error) {
+      console.log(error.message);
     }
   };
 
@@ -240,7 +256,9 @@ export default function DashProfile() {
         <span className="cursor-pointer" onClick={() => setShowModal(true)}>
           Delete Account
         </span>
-        <span className="cursor-pointer">Sign Out</span>
+        <span className="cursor-pointer" onClick={handleSignout}>
+          Sign Out
+        </span>
       </div>
       {updateUserSuccess && (
         <Alert color="success" className="mt-5">
