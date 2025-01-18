@@ -18,10 +18,12 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
-      <div className="">
+      <div className="md:w-56">
         <DashSideBar />
       </div>
-      {tab === "profile" && <DashProfile />}
+      <div className="flex-1 flex justify-center p-4">
+        {tab === "profile" && <DashProfile />}
+      </div>
     </div>
   );
 }

@@ -1,6 +1,7 @@
-import { Alert, TextInput } from "flowbite-react";
+import { Alert, Modal, TextInput } from "flowbite-react";
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "flowbite-react";
+import { PiWarningCircleBold } from "react-icons/pi";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { CircularProgressbar } from "react-circular-progressbar";
@@ -9,13 +10,16 @@ import {
   updateStart,
   updateSuccess,
   updateFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure,
 } from "../toolkit/user/userSlice";
 
 export default function DashProfile() {
   const dispatch = useDispatch();
   const filePickerRef = useRef();
 
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, error } = useSelector((state) => state.user);
   const [imageFile, setImageFile] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
   const [formData, setFormData] = useState({});
@@ -25,7 +29,7 @@ export default function DashProfile() {
   const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
   const [updateUserError, setUpdateUserError] = useState(null);
-
+  const [showModal, setShowModal] = useState(false);
   const handleImageChange = (e) => {
     const file = e.target.files[0];
 
@@ -142,6 +146,24 @@ export default function DashProfile() {
     }
   };
 
+  const handleDeleteUser = async () => {
+    setShowModal(false);
+    try {
+      dispatch(deleteUserStart());
+      console.log(currentUser._id);
+      const res = await axios.delete(`/api/user/delete/${currentUser._id}`);
+      const data = res.data;
+      console.log(data);
+      if (res.status !== 200) {
+        dispatch(deleteUserFailure(data));
+      } else {
+        dispatch(deleteUserSuccess(data));
+      }
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message));
+    }
+  };
+
   console.log(formData);
   return (
     <div className="max-w-lg max-auto p-3 w-full">
@@ -215,7 +237,9 @@ export default function DashProfile() {
         <Button type="submit">Update</Button>
       </form>
       <div className="text-red-500 flex justify-between">
-        <span className="cursor-pointer">Delete Account</span>
+        <span className="cursor-pointer" onClick={() => setShowModal(true)}>
+          Delete Account
+        </span>
         <span className="cursor-pointer">Sign Out</span>
       </div>
       {updateUserSuccess && (
@@ -228,6 +252,35 @@ export default function DashProfile() {
           {updateUserError}
         </Alert>
       )}
+      {error && (
+        <Alert color="success" className="mt-5">
+          {error}
+        </Alert>
+      )}
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        popup
+        size="md"
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <PiWarningCircleBold className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
+            <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
+              Are You Sure Do You Want To delete An Account!
+            </h3>
+            <div className="flex flex-row justify-center gap-14">
+              <Button color="failure" onClick={handleDeleteUser}>
+                yes, I'm Sure
+              </Button>
+              <Button color="gray" onClick={() => setShowModal(false)}>
+                No, cancel
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }
